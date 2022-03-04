@@ -1,0 +1,1 @@
+../libstm32l0/stm32l010f4p6.ld
