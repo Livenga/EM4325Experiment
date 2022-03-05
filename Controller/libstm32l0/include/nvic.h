@@ -41,7 +41,7 @@ enum irq_type_t {
   HardFault_IRQn = -13,
   SVCall_IRQn = -5,
   PendSV_IRQn = -2,
-  SysTick_IRQn = 1,
+  SysTick_IRQn = -1,
   WWDG_IRQn = 0,
   RTC_IRQn = 2,
   FLASH_IRQn = 3,
