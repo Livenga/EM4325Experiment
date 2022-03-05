@@ -18,7 +18,7 @@ void gpio_set_mode(
 void gpio_set_alternate_function(
     struct gpio_t *gpio,
     uint8_t n,
-    uint8_t afsel) {
+    gpio_afsel_t afsel) {
   if(n > 15)
     return;
 

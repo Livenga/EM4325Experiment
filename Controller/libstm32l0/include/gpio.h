@@ -1,3 +1,6 @@
+/** 8 General-purpose I/Os (GPIO) RM0451 p 191
+ */
+
 #ifndef _GPIO_H
 #define _GPIO_H
 
@@ -250,6 +253,17 @@ struct gpio_t {
 #define GPIO_AFRH_AFSEL9  (0x000000f0)
 #define GPIO_AFRH_AFSEL8  (0x0000000f)
 
+typedef enum gpio_afsel_t gpio_afsel_t;
+enum gpio_afsel_t {
+  AF0 = 0,
+  AF1,
+  AF2,
+  AF3,
+  AF4,
+  AF5,
+  AF6,
+  AF7,
+};
 
 /** GPIO port bit reset register (BRR)
  * Offset: 0x0028
