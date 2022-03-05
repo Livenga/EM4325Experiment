@@ -9,5 +9,6 @@
 #include "gpio.h"
 #include "lpuart.h"
 #include "flash.h"
+#include "tim2.h"
 
 #endif
