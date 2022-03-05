@@ -4,7 +4,7 @@ LD = $(EABI)-ld
 CC = $(EABI)-gcc
 OBJCOPY = $(EABI)-objcopy
 
-PRJC = ctrl432
+PRJC = ctrl4325
 
 OBJDIR = objs
 
