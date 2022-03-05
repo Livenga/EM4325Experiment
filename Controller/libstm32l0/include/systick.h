@@ -39,4 +39,5 @@ struct stk_t {
 #define STK_CALIB_OREF  (0x80000000)
 #define STK_CALIB_SKEW  (0x40000000)
 #define STK_CALIB_TENMS (0x00ffffff)
+
 #endif

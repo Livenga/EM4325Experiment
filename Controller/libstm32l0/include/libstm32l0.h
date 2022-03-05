@@ -4,7 +4,9 @@
 #include "io.h"
 
 #include "nvic.h"
+#include "scb.h"
 #include "systick.h"
+
 #include "rcc.h"
 #include "gpio.h"
 #include "lpuart.h"

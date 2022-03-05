@@ -20,10 +20,11 @@ void LPUART1_handler(void) {
       else
         lpuart_putchar((struct lpuart_t *)LPUART1, (number + 1) + '0');
     } else {
-      lpuart_putchar((struct lpuart_t *)LPUART1, '-');
+      lpuart_putchar((struct lpuart_t *)LPUART1, '.');
     }
   }
 }
+
 
 void lpuart_putchar(
     struct lpuart_t *lpuart,
@@ -32,4 +33,20 @@ void lpuart_putchar(
   while((lpuart->ISR & LPUART_ISR_TC) == 0);
 
   lpuart->ICR = LPUART_ICR_TCCF;
+}
+
+void lpuart_print(
+    struct lpuart_t *lpuart,
+    const char *str) {
+  while(*str) {
+    lpuart_putchar(lpuart, *str);
+    ++str;
+  }
+}
+
+void lpuart_println(
+    struct lpuart_t *lpuart,
+    const char *str) {
+  lpuart_print(lpuart, str);
+  lpuart_print(lpuart, "\r\n");
 }
