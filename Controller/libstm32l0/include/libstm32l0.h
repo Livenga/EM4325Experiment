@@ -12,5 +12,6 @@
 #include "lpuart.h"
 #include "flash.h"
 #include "tim2.h"
+#include "spi.h"
 
 #endif
