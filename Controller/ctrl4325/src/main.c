@@ -51,6 +51,8 @@ int main(void) {
   // LPUART1, TIM2 有効化
   RCC->APB1ENR |= RCC_APB1ENR_LPUART1EN
     | RCC_APB1ENR_TIM2EN;
+
+  // LPUART1 のクロック供給元をSystem Clock(MSI: 4.2MHz) に変更.
   RCC->CCIPR = (RCC->CCIPR & ~RCC_CCIPR_LPUART1SEL) | (0b01 << 10);
 
   // GPIO A, B, H 有効化
@@ -62,8 +64,24 @@ int main(void) {
   gpio_set_mode((struct gpio_t *)GPIOA, 2, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
   gpio_set_mode((struct gpio_t *)GPIOA, 3, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
 
-  gpio_set_alternate_function((struct gpio_t *)GPIOA, 2, 6);
-  gpio_set_alternate_function((struct gpio_t *)GPIOA, 3, 6);
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 2, AF6);
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 3, AF6);
+
+  // SPI 設定
+  // GPIO A 5, 6, 7 SCK, MISO, MOSI
+  gpio_set_mode((struct gpio_t *)GPIOA, 5, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
+  gpio_set_mode((struct gpio_t *)GPIOA, 6, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
+  gpio_set_mode((struct gpio_t *)GPIOA, 7, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
+
+  // GPIO B 1 CS
+  gpio_set_mode((struct gpio_t *)GPIOB, 1, GPIO_MODER_MODE_GPO);
+  GPIOB->BSRR |= (1 << 1);
+
+#if 1
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 5, AF0);
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 6, AF0);
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 7, AF0);
+#endif
 
 
   // GPIO A 10 Output
