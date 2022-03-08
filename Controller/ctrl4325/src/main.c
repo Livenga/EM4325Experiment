@@ -73,17 +73,27 @@ int main(void) {
   gpio_set_mode((struct gpio_t *)GPIOA, 6, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
   gpio_set_mode((struct gpio_t *)GPIOA, 7, GPIO_MODER_MODE_ALTERNATE_FUNCTION);
 
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 5, AF0); // SCK
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 6, AF0); // MISO
+  gpio_set_alternate_function((struct gpio_t *)GPIOA, 7, AF0); // MOSI
+
   // GPIO B 1 CS
   gpio_set_mode((struct gpio_t *)GPIOB, 1, GPIO_MODER_MODE_GPO);
   GPIOB->BSRR |= (1 << 1);
 
-#if 1
-  gpio_set_alternate_function((struct gpio_t *)GPIOA, 5, AF0);
-  gpio_set_alternate_function((struct gpio_t *)GPIOA, 6, AF0);
-  gpio_set_alternate_function((struct gpio_t *)GPIOA, 7, AF0);
+  SPI1->CR1 = SPI_CR1_CRCEN
+    | SPI_CR1_LSBFIRST
+    | SPI_CR1_BR_FPCLK_2
+    | SPI_CR1_MSTR;
+
+#if 0
+  SPI1->CR1 |= SPI_CR1_CPOL;
+  SPI1->CR1 |= SPI_CR1_CPHA;
 #endif
+    SPI1->CR1 |= SPI_CR1_SPE;
 
 
+  // LED 点滅確認用
   // GPIO A 10 Output
   gpio_set_mode((struct gpio_t *)GPIOA, 10, GPIO_MODER_MODE_GPO);
 
@@ -101,11 +111,11 @@ int main(void) {
 
 
   NVIC_set_priority(LPUART1_IRQn, 1);
-  NVIC_set_priority(TIM2_IRQn, 0);
+  //NVIC_set_priority(TIM2_IRQn, 0);
   NVIC_set_priority(SysTick_IRQn, 3);
 
   NVIC_enable_IRQ(LPUART1_IRQn);
-  NVIC_enable_IRQ(TIM2_IRQn);
+  //NVIC_enable_IRQ(TIM2_IRQn);
 
   //
   STK->RVR = 2052000;
