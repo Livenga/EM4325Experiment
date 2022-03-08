@@ -1,4 +1,5 @@
-/** 14 General-purpose timer (TIM2) RM0451 p.302 */
+/** 14 General-purpose timer (TIM2) RM0451 p.302
+ */
 
 
 #ifndef _TIM2_H

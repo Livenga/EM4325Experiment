@@ -8,7 +8,7 @@
 #include "io.h"
 
 #define SPI1_ADDR (0x40013000)
-#define SPI1 ((volatile spi_t *)SPI1_ADDR)
+#define SPI1 ((volatile struct spi_t *)SPI1_ADDR)
 
 
 struct spi_t {
@@ -40,6 +40,15 @@ struct spi_t {
 #define SPI_CR1_MSTR     (0x00000004)
 #define SPI_CR1_CPOL     (0x00000002)
 #define SPI_CR1_CPHA     (0x00000001)
+
+#define SPI_CR1_BR_FPCLK_2   (0x00000000)
+#define SPI_CR1_BR_FPCLK_4   (0x00000008)
+#define SPI_CR1_BR_FPCLK_8   (0x00000010)
+#define SPI_CR1_BR_FPCLK_16  (0x00000018)
+#define SPI_CR1_BR_FPCLK_32  (0x00000020)
+#define SPI_CR1_BR_FPCLK_64  (0x00000028)
+#define SPI_CR1_BR_FPCLK_128 (0x00000030)
+#define SPI_CR1_BR_FPCLK_256 (0x00000038)
 
 /** SPI control register 2 (SPI_CR2)
  * Offset: 0x0004
