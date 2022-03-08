@@ -14,7 +14,8 @@ CSRC = src/main.c \
 			 src/systick.c \
 			 src/lpuart.c \
 			 src/nvic.c \
-			 src/mdelay.c
+			 src/mdelay.c \
+			 src/spi.c
 
 SSRC = src/asm/startup.s
 
