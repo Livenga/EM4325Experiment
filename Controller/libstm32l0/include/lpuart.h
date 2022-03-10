@@ -11,6 +11,8 @@
 #define LPUART_ADDR (0x40004800)
 #define LPUART1 ((volatile struct lpuart_t *)LPUART_ADDR)
 
+typedef volatile struct lpuart_t lpuart_t;
+
 struct lpuart_t {
   _IO uint32_t CR1;
   _IO uint32_t CR2;

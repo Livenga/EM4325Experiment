@@ -25,7 +25,9 @@ void lpuart_println(
     const char *str);
 
 
-static const char *_skip_chars(const char *str, char c) {
+static const char *_skip_chars(
+    const char *str,
+    char c) {
   while(*str) {
     if(*str == c) {
       ++str;

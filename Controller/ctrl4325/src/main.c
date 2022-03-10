@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+
 #include "../include/asm.h"
 #include "../../libstm32l0/include/libstm32l0.h"
 
@@ -81,15 +82,14 @@ int main(void) {
   gpio_set_mode((struct gpio_t *)GPIOB, 1, GPIO_MODER_MODE_GPO);
   GPIOB->BSRR |= (1 << 1);
 
-  SPI1->CR1 = SPI_CR1_CRCEN
-    | SPI_CR1_LSBFIRST
-    | SPI_CR1_BR_FPCLK_2
-    | SPI_CR1_MSTR;
-
+  SPI1->CR1 =  SPI_CR1_CRCEN | SPI_CR1_BR_FPCLK_4 | SPI_CR1_MSTR;
+  //SPI1->CR1 |= SPI_CR1_LSBFIRST;
 #if 0
   SPI1->CR1 |= SPI_CR1_CPOL;
   SPI1->CR1 |= SPI_CR1_CPHA;
 #endif
+  SPI1->CR2 = SPI_CR2_SSOE;
+  //SPI1->CR2 |= SPI_CR2_TXEIE | SPI_CR2_RXNEIE;
     SPI1->CR1 |= SPI_CR1_SPE;
 
 
@@ -109,13 +109,13 @@ int main(void) {
   lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
 #endif
 
+  NVIC_enable_IRQ(LPUART1_IRQn);
+  //NVIC_enable_IRQ(TIM2_IRQn);
 
   NVIC_set_priority(LPUART1_IRQn, 1);
   //NVIC_set_priority(TIM2_IRQn, 0);
   NVIC_set_priority(SysTick_IRQn, 3);
 
-  NVIC_enable_IRQ(LPUART1_IRQn);
-  //NVIC_enable_IRQ(TIM2_IRQn);
 
   //
   STK->RVR = 2052000;

@@ -8,7 +8,9 @@
 #include "io.h"
 
 #define SPI1_ADDR (0x40013000)
-#define SPI1 ((volatile struct spi_t *)SPI1_ADDR)
+#define SPI1 ((spi_t *)SPI1_ADDR)
+
+typedef volatile struct spi_t spi_t;
 
 
 struct spi_t {
@@ -71,8 +73,8 @@ struct spi_t {
 #define SPI_SR_OVR    (0x00000040)
 #define SPI_SR_MODF   (0x00000020)
 #define SPI_SR_CRCERR (0x00000010)
-#define SPI_SR_TXF    (0x00000002)
-#define SPI_SR_RXNF   (0x00000001)
+#define SPI_SR_TXE    (0x00000002)
+#define SPI_SR_RXNE   (0x00000001)
 
 /** SPI data register (SPI_DR)
  * Offset: 0x000c
