@@ -6,7 +6,10 @@
 #include "../include/asm.h"
 #include "../include/em4325.h"
 
+
 extern void mdelay16(uint16_t msec);
+extern void udelay16(uint16_t msec);
+
 extern void lpuart_putchar(
     struct lpuart_t *lpuart,
     const int8_t c);
@@ -100,7 +103,7 @@ void em4325_read_word(
   spi_communicate(spi, 0xe7);
   spi_communicate(spi, address);
 
-  mdelay16(1);
+  udelay16(25);
 
   uint8_t status;
   do {

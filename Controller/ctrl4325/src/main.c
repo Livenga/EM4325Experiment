@@ -6,6 +6,8 @@
 
 #define __DEBUG__ 1
 
+//extern void mdelay16(uint16_t msec);
+//extern void udelay16(uint16_t usec);
 
 extern void NVIC_enable_IRQ(irq_type_t n);
 extern void NVIC_set_priority(
