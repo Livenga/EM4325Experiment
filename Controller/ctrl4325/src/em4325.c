@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 
+#define __DEBUG__ 1
+
 #include "../../libstm32l0/include/libstm32l0.h"
 #include "../include/asm.h"
 #include "../include/em4325.h"
@@ -95,7 +97,7 @@ int8_t em4325_get_sensordata(
   return 0;
 }
 
-void em4325_read_word(
+uint16_t em4325_read_word(
     spi_t *spi,
     uint8_t address) {
   GPIOB->BSRR |= (1 << 17);
@@ -129,4 +131,36 @@ void em4325_read_word(
     uint8_t segment = (data >> shift_size) & 0x0f;
     lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR(segment));
   }
+
+  return data;
+}
+
+uint8_t em4325_write_word(
+    spi_t    *spi,
+    uint8_t  address,
+    uint16_t data) {
+  GPIOB->BSRR |= 1 << 17;
+
+  spi_communicate(spi, 0xe8);
+  spi_communicate(spi, address);
+  spi_communicate(spi, (data >> 8) & 0xff);
+  spi_communicate(spi, (data >> 0) & 0xff);
+
+  mdelay16(1);
+
+  uint8_t status = 0;
+  do {
+    status = spi_communicate(spi, 0);
+  } while(status == 0);
+
+  GPIOB->BSRR |= 1 << 1;
+
+#ifdef __DEBUG__
+  lpuart_print((struct lpuart_t *)LPUART1, "# Write world response: ");
+  lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 4) & 0x0f));
+  lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 0) & 0x0f));
+  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+#endif
+
+  return status;
 }

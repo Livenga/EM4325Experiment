@@ -3,6 +3,7 @@
 
 #include "../include/asm.h"
 #include "../../libstm32l0/include/libstm32l0.h"
+#include "../include/em4325.h"
 
 #define __DEBUG__ 1
 

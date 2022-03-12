@@ -16,7 +16,12 @@ extern int8_t em4325_get_sensordata(
     uint8_t required_new_sample,
     struct em4325_sensor_data_t *p);
 
-extern void em4325_read_word(
+extern uint16_t em4325_read_word(
     spi_t *spi,
     uint8_t address);
+
+extern uint8_t em4325_write_word(
+    spi_t    *spi,
+    uint8_t  address,
+    uint16_t data);
 #endif
