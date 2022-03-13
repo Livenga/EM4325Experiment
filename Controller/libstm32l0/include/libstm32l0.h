@@ -14,5 +14,6 @@
 #include "flash.h"
 #include "tim2.h"
 #include "spi.h"
+#include "adc.h"
 
 #endif
