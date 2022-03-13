@@ -1,0 +1,206 @@
+/** 12 Extended interrupt and event controller (EXTI) RM0451 p.242 */
+
+#ifndef _EXTI_H
+#define _EXTI_H
+
+#include <stdint.h>
+#include "io.h"
+
+#define EXTI_ADDR (0x40010400)
+#define EXTI ((exti_t *)EXTI_ADDR)
+
+typedef volatile struct exti_t exti_t;
+struct exti_t {
+  _IO uint32_t IMR;
+  _IO uint32_t EMR;
+  _IO uint32_t RTSR;
+  _IO uint32_t FTSR;
+  _IO uint32_t SWIER;
+  _IO uint32_t PR;
+};
+
+
+// 参考に Table50. EXTI lines connections  を参照
+
+
+/** EXTI interrupt mask register(EXTI_IMR)
+ * Offset: 0x0000
+ * Reset value: 0x3f84 0000
+ */
+#define EXTI_IMR_IM29 (0x20000000)
+#define EXTI_IMR_IM28 (0x10000000)
+#define EXTI_IMR_IM26 (0x04000000)
+#define EXTI_IMR_IM25 (0x02000000)
+#define EXTI_IMR_IM24 (0x01000000)
+#define EXTI_IMR_IM23 (0x00800000)
+#define EXTI_IMR_IM22 (0x00400000)
+#define EXTI_IMR_IM21 (0x00200000)
+#define EXTI_IMR_IM20 (0x00100000)
+#define EXTI_IMR_IM19 (0x00080000)
+#define EXTI_IMR_IM17 (0x00020000)
+#define EXTI_IMR_IM16 (0x00010000)
+#define EXTI_IMR_IM15 (0x00008000)
+#define EXTI_IMR_IM14 (0x00004000)
+#define EXTI_IMR_IM13 (0x00002000)
+#define EXTI_IMR_IM12 (0x00001000)
+#define EXTI_IMR_IM11 (0x00000800)
+#define EXTI_IMR_IM10 (0x00000400)
+#define EXTI_IMR_IM9  (0x00000200)
+#define EXTI_IMR_IM8  (0x00000100)
+#define EXTI_IMR_IM7  (0x00000080)
+#define EXTI_IMR_IM6  (0x00000040)
+#define EXTI_IMR_IM5  (0x00000020)
+#define EXTI_IMR_IM4  (0x00000010)
+#define EXTI_IMR_IM3  (0x00000008)
+#define EXTI_IMR_IM2  (0x00000004)
+#define EXTI_IMR_IM1  (0x00000002)
+#define EXTI_IMR_IM0  (0x00000001)
+
+
+/** EXTI event mask register (EXTI_EMR)
+ * Offset: 0x0004
+ * Reset value: 0x0000 0000
+ */
+#define EXTI_EMR_EM29 (0x20000000)
+#define EXTI_EMR_EM28 (0x10000000)
+#define EXTI_EMR_EM26 (0x04000000)
+#define EXTI_EMR_EM25 (0x02000000)
+#define EXTI_EMR_EM24 (0x01000000)
+#define EXTI_EMR_EM23 (0x00800000)
+#define EXTI_EMR_EM22 (0x00400000)
+#define EXTI_EMR_EM21 (0x00200000)
+#define EXTI_EMR_EM20 (0x00100000)
+#define EXTI_EMR_EM19 (0x00080000)
+#define EXTI_EMR_EM17 (0x00020000)
+#define EXTI_EMR_EM16 (0x00010000)
+#define EXTI_EMR_EM15 (0x00008000)
+#define EXTI_EMR_EM14 (0x00004000)
+#define EXTI_EMR_EM13 (0x00002000)
+#define EXTI_EMR_EM12 (0x00001000)
+#define EXTI_EMR_EM11 (0x00000800)
+#define EXTI_EMR_EM10 (0x00000400)
+#define EXTI_EMR_EM9  (0x00000200)
+#define EXTI_EMR_EM8  (0x00000100)
+#define EXTI_EMR_EM7  (0x00000080)
+#define EXTI_EMR_EM6  (0x00000040)
+#define EXTI_EMR_EM5  (0x00000020)
+#define EXTI_EMR_EM4  (0x00000010)
+#define EXTI_EMR_EM3  (0x00000008)
+#define EXTI_EMR_EM2  (0x00000004)
+#define EXTI_EMR_EM1  (0x00000002)
+#define EXTI_EMR_EM0  (0x00000001)
+
+
+/** EXTI rising edge trigger selection register (EXTI_RTSR)
+ * Offset: 0x0008
+ * Reset value: 0x0000 0000
+ */
+#define EXTI_RTSR_RT22 (0x00400000)
+#define EXTI_RTSR_RT21 (0x00200000)
+#define EXTI_RTSR_RT20 (0x00100000)
+#define EXTI_RTSR_RT19 (0x00080000)
+#define EXTI_RTSR_RT17 (0x00020000)
+#define EXTI_RTSR_RT16 (0x00010000)
+#define EXTI_RTSR_RT15 (0x00008000)
+#define EXTI_RTSR_RT14 (0x00004000)
+#define EXTI_RTSR_RT13 (0x00002000)
+#define EXTI_RTSR_RT12 (0x00001000)
+#define EXTI_RTSR_RT11 (0x00000800)
+#define EXTI_RTSR_RT10 (0x00000400)
+#define EXTI_RTSR_RT9  (0x00000200)
+#define EXTI_RTSR_RT8  (0x00000100)
+#define EXTI_RTSR_RT7  (0x00000080)
+#define EXTI_RTSR_RT6  (0x00000040)
+#define EXTI_RTSR_RT5  (0x00000020)
+#define EXTI_RTSR_RT4  (0x00000010)
+#define EXTI_RTSR_RT3  (0x00000008)
+#define EXTI_RTSR_RT2  (0x00000004)
+#define EXTI_RTSR_RT1  (0x00000002)
+#define EXTI_RTSR_RT0  (0x00000001)
+
+
+/** Falling edge trigger selection register (EXTI_FTSR)
+ * Offset: 0x000c
+ * Reset value: 0x0000 0000
+ */
+#define EXTI_FTSR_FT22 (0x00400000)
+#define EXTI_FTSR_FT21 (0x00200000)
+#define EXTI_FTSR_FT20 (0x00100000)
+#define EXTI_FTSR_FT19 (0x00080000)
+#define EXTI_FTSR_FT17 (0x00020000)
+#define EXTI_FTSR_FT16 (0x00010000)
+#define EXTI_FTSR_FT15 (0x00008000)
+#define EXTI_FTSR_FT14 (0x00004000)
+#define EXTI_FTSR_FT13 (0x00002000)
+#define EXTI_FTSR_FT12 (0x00001000)
+#define EXTI_FTSR_FT11 (0x00000800)
+#define EXTI_FTSR_FT10 (0x00000400)
+#define EXTI_FTSR_FT9  (0x00000200)
+#define EXTI_FTSR_FT8  (0x00000100)
+#define EXTI_FTSR_FT7  (0x00000080)
+#define EXTI_FTSR_FT6  (0x00000040)
+#define EXTI_FTSR_FT5  (0x00000020)
+#define EXTI_FTSR_FT4  (0x00000010)
+#define EXTI_FTSR_FT3  (0x00000008)
+#define EXTI_FTSR_FT2  (0x00000004)
+#define EXTI_FTSR_FT1  (0x00000002)
+#define EXTI_FTSR_FT0  (0x00000001)
+
+
+/** EXTI software interrupt event register (EXTI_SWIER)
+ * Offset: 0x0010
+ * Reset value: 0x0000 0000
+ */
+#define EXTI_SWIER_SWI22 (0x00400000)
+#define EXTI_SWIER_SWI21 (0x00200000)
+#define EXTI_SWIER_SWI20 (0x00100000)
+#define EXTI_SWIER_SWI19 (0x00080000)
+#define EXTI_SWIER_SWI17 (0x00020000)
+#define EXTI_SWIER_SWI16 (0x00010000)
+#define EXTI_SWIER_SWI15 (0x00008000)
+#define EXTI_SWIER_SWI14 (0x00004000)
+#define EXTI_SWIER_SWI13 (0x00002000)
+#define EXTI_SWIER_SWI12 (0x00001000)
+#define EXTI_SWIER_SWI11 (0x00000800)
+#define EXTI_SWIER_SWI10 (0x00000400)
+#define EXTI_SWIER_SWI9  (0x00000200)
+#define EXTI_SWIER_SWI8  (0x00000100)
+#define EXTI_SWIER_SWI7  (0x00000080)
+#define EXTI_SWIER_SWI6  (0x00000040)
+#define EXTI_SWIER_SWI5  (0x00000020)
+#define EXTI_SWIER_SWI4  (0x00000010)
+#define EXTI_SWIER_SWI3  (0x00000008)
+#define EXTI_SWIER_SWI2  (0x00000004)
+#define EXTI_SWIER_SWI1  (0x00000002)
+#define EXTI_SWIER_SWI0  (0x00000001)
+
+
+/** EXTI pending register (EXTI_PR)
+ * Offset: 0x0014
+ * Reset value: 0x0000 0000
+ */
+#define EXTI_PR_PIF22 (0x00400000)
+#define EXTI_PR_PIF21 (0x00200000)
+#define EXTI_PR_PIF20 (0x00100000)
+#define EXTI_PR_PIF19 (0x00080000)
+#define EXTI_PR_PIF17 (0x00020000)
+#define EXTI_PR_PIF16 (0x00010000)
+#define EXTI_PR_PIF15 (0x00008000)
+#define EXTI_PR_PIF14 (0x00004000)
+#define EXTI_PR_PIF13 (0x00002000)
+#define EXTI_PR_PIF12 (0x00001000)
+#define EXTI_PR_PIF11 (0x00000800)
+#define EXTI_PR_PIF10 (0x00000400)
+#define EXTI_PR_PIF9  (0x00000200)
+#define EXTI_PR_PIF8  (0x00000100)
+#define EXTI_PR_PIF7  (0x00000080)
+#define EXTI_PR_PIF6  (0x00000040)
+#define EXTI_PR_PIF5  (0x00000020)
+#define EXTI_PR_PIF4  (0x00000010)
+#define EXTI_PR_PIF3  (0x00000008)
+#define EXTI_PR_PIF2  (0x00000004)
+#define EXTI_PR_PIF1  (0x00000002)
+#define EXTI_PR_PIF0  (0x00000001)
+
+
+#endif
