@@ -8,6 +8,7 @@
 #include "systick.h"
 
 #include "rcc.h"
+#include "pwr.h"
 #include "gpio.h"
 #include "lpuart.h"
 #include "flash.h"
