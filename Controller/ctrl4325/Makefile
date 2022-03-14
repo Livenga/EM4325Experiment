@@ -26,6 +26,8 @@ ARCH = armv6-m
 CFLAGS = -mcpu=$(CPU) \
 				 -mtune=$(CPU) \
 				 -march=$(ARCH) \
+				 -msoft-float \
+				 -mfloat-abi=soft \
 				 -mthumb \
 				 -g
 
