@@ -9,6 +9,7 @@
 
 #include "exti.h"
 #include "pwr.h"
+#include "dma.h"
 #include "rcc.h"
 #include "gpio.h"
 #include "lpuart.h"
