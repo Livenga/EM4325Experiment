@@ -9,6 +9,8 @@
 #include "../include/em4325.h"
 
 
+extern uint16_t spi_communicate(spi_t *spi, uint16_t data);
+
 extern void mdelay16(uint16_t msec);
 extern void udelay16(uint16_t msec);
 
@@ -27,18 +29,6 @@ extern void lpuart_println(
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 
-/**
- */
-uint16_t spi_communicate(
-    spi_t *spi,
-    uint16_t data) {
-  while((spi->SR & SPI_SR_TXE) == 0) { NOP(); }
-  spi->DR = data;
-
-  while((spi->SR & SPI_SR_RXNE) == 0) { NOP(); }
-
-  return spi->DR & 0xff;
-}
 
 /**
  */

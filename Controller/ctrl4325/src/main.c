@@ -4,10 +4,11 @@
 #include "../include/asm.h"
 #include "../../libstm32l0/include/libstm32l0.h"
 #include "../include/em4325.h"
+#include "../include/mpl1151a.h"
 
 #define __DEBUG__ 1
 
-//extern void mdelay16(uint16_t msec);
+extern void mdelay16(uint16_t msec);
 //extern void udelay16(uint16_t usec);
 
 extern void NVIC_enable_IRQ(irq_type_t n);
@@ -111,6 +112,9 @@ int main(void) {
 #ifdef __DEBUG__
   lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
 #endif
+
+  mpl1151a_init();
+  mdelay16(3000);
 
   NVIC_enable_IRQ(LPUART1_IRQn);
   //NVIC_enable_IRQ(TIM2_IRQn);

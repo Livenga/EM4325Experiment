@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "../../libstm32l0/include/libstm32l0.h"
+#include "../include/mpl1151a.h"
 #include "../include/em4325.h"
 
 #define HEX2CHR(u8) \
@@ -18,21 +19,30 @@ extern void lpuart_println(
     struct lpuart_t *lpuart,
     const char *str);
 
+extern void print_float_value(float value, size_t n);
 
 static uint8_t _is_bright = 0;
 static uint8_t _is_em4325_ready = 0;
 
-void SysTick_handler(void) {
-  struct em4325_sensor_data_t sensor_data;
 
+void SysTick_handler(void) {
 #if 1
   if(_is_bright) {
     GPIOA->BSRR = (1 <<  26);
   } else {
     GPIOA->BSRR = (1 <<  10);
   }
+
+  float pressure = mpl1151a_get_pressure();
+  lpuart_print((struct lpuart_t *)LPUART1, "Pressure = ");
+  print_float_value(pressure, 3);
+  lpuart_println((struct lpuart_t *)LPUART1, "[kPa]");
+
+  _is_bright ^= 1;
 #endif
 
+#if 0
+  struct em4325_sensor_data_t sensor_data;
   if(_is_em4325_ready == 0) {
     uint16_t status = em4325_request_status();
 
@@ -70,14 +80,7 @@ void SysTick_handler(void) {
       lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((_segment >> 0) & 0xf));
     }
     lpuart_println((struct lpuart_t *)LPUART1, NULL);
-#else
-    lpuart_print((struct lpuart_t *)LPUART1, "0x");
-    for(int8_t addr = 0x04; addr < 0x14; ++addr) {
-      em4325_read_word(SPI1, addr);
-    }
-    lpuart_println((struct lpuart_t *)LPUART1, NULL);
 #endif
   }
-
-  _is_bright ^= 1;
+#endif
 }
