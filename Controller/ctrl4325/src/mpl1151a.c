@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "../../libstm32l0/include/libstm32l0.h"
+#include "../include/spi_ex.h"
 #include "../include/mpl1151a.h"
+
 
 extern void mdelay16(uint16_t msec);
 
@@ -13,17 +15,25 @@ extern uint16_t spi_writeonly(spi_t *spi, uint16_t data);
 static int8_t _is_initialized = 0;
 static struct mpl1151_coefficient_t _coefficient;
 
+static struct gpio_t *_gpio = NULL;
+static uint8_t _cs_number = 0;
+
 
 /**
 */
-const struct mpl1151_coefficient_t *mpl1151a_init(void) {
+const struct mpl1151_coefficient_t *mpl1151a_init(
+    struct gpio_t *gpio,
+    uint8_t cs_number) {
+  _gpio = gpio,
+  _cs_number = cs_number;
+
   if(_is_initialized) {
     return &_coefficient;
   }
 
   memset((void *)&_coefficient, 0, sizeof(struct mpl1151_coefficient_t));
 
-  GPIOB->BSRR |= (1 << 17);
+  CS_OFF(_gpio, _cs_number);
 
   // 計数の読み出し
   uint16_t a0_msb, a0_lsb;
@@ -54,7 +64,7 @@ const struct mpl1151_coefficient_t *mpl1151a_init(void) {
 
   spi_communicate(SPI1, 0);
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
 
 
   int16_t a0  = (a0_msb << 8) | a0_lsb,
@@ -80,17 +90,16 @@ float mpl1151a_get_pressure(void) {
     return .0f;
   }
 
-  GPIOB->BSRR |= (1 << 17);
+  CS_OFF(_gpio, _cs_number);
 
   spi_communicate(SPI1, MPL1151A_CONVERT);
   spi_communicate(SPI1, 0);
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
   mdelay16(10);
 
 
-  GPIOB->BSRR |= (1 << 17);
-
+  CS_OFF(_gpio, _cs_number);
 
   uint16_t padc_msb, padc_lsb;
   spi_communicate(SPI1, MPL1151A_PADC_MSB_COMMAND);
@@ -106,7 +115,8 @@ float mpl1151a_get_pressure(void) {
 
   spi_communicate(SPI1, 0x00);
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
+
 
   uint16_t padc = ((padc_msb << 8) | padc_lsb) >> 6,
            tadc = ((tadc_msb << 8) | tadc_lsb) >> 6;

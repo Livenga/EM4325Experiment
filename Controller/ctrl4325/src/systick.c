@@ -6,6 +6,7 @@
 #include "../include/mpl1151a.h"
 #include "../include/em4325.h"
 
+#define __DEBUG__
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 
@@ -20,6 +21,7 @@ extern void lpuart_println(
     const char *str);
 
 extern void print_float_value(float value, size_t n);
+extern void print_to_hex(uint32_t value, size_t size);
 
 static uint8_t _is_bright = 0;
 static uint8_t _is_em4325_ready = 0;
@@ -41,46 +43,36 @@ void SysTick_handler(void) {
   _is_bright ^= 1;
 #endif
 
-#if 0
-  struct em4325_sensor_data_t sensor_data;
-  if(_is_em4325_ready == 0) {
-    uint16_t status = em4325_request_status();
-
 #if 1
-    lpuart_print((struct lpuart_t *)LPUART1, "# Request status: 0x");
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 12) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 8) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 4) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 0) & 0xf));
-    lpuart_println((struct lpuart_t *)LPUART1, NULL);
+  uint16_t em4325_status = em4325_request_status();
+
+#ifdef __DEBUG__
+  lpuart_print((struct lpuart_t *)LPUART1, "# EM4325 Current Status\t");
+  print_to_hex(em4325_status, sizeof(uint16_t));
 #endif
 
-    if(status != 0 && (status & 0b11) == 0) {
-      _is_em4325_ready = 1;
-    }
-  } else {
-#if 1
-    memset((void *)&sensor_data, 0, sizeof(struct em4325_sensor_data_t));
-
-    int8_t response = em4325_get_sensordata(1, &sensor_data);
-    lpuart_print((struct lpuart_t *)LPUART1, "# Get sensor data Status: 0x");
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((sensor_data.status >> 12) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((sensor_data.status >> 8) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((sensor_data.status >> 4) & 0xf));
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((sensor_data.status >> 0) & 0xf));
-    lpuart_println((struct lpuart_t *)LPUART1, NULL);
-
-    lpuart_print((struct lpuart_t *)LPUART1, "# Sensor Data: 0x");
-
-    int8_t i;
-    for(i = 0; i < 4; ++i) {
-      uint8_t _segment = (sensor_data.sensor >> (8 * (3 - i))) & 0xff;
-
-      lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((_segment >> 4) & 0xf));
-      lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((_segment >> 0) & 0xf));
-    }
-    lpuart_println((struct lpuart_t *)LPUART1, NULL);
+  if((em4325_status & 0x03) == 0
+      && (em4325_status & 0x38) == 0x38) {
+    uint16_t result_boot = em4325_boot();
+#ifdef __DEBUG__
+    lpuart_print((struct lpuart_t *)LPUART1, "\tExecute EM4325 Boot command\t");
+    print_to_hex(result_boot, sizeof(uint16_t));
 #endif
   }
+
+  struct em4325_sensor_data_t sensor_data;
+  memset((void *)&sensor_data, 0, sizeof(struct em4325_sensor_data_t));
+
+  int8_t response = em4325_get_sensordata(1, &sensor_data);
+  lpuart_print((struct lpuart_t *)LPUART1, "\tGet sensor data Status: 0x");
+  print_to_hex(sensor_data.status, sizeof(uint16_t));
+
+  lpuart_print((struct lpuart_t *)LPUART1, "\t\tSensor Data: ");
+  float temp = ((((int16_t)(sensor_data.sensor >> 16) & 0x01ff) << 7) * .25f) / 128.f;
+  print_float_value(temp, 2);
+  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+
+  lpuart_print((struct lpuart_t *)LPUART1, "\t\tUTC Data: 0x");
+  print_to_hex(sensor_data.utc, sizeof(uint32_t));
 #endif
 }

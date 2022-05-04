@@ -2,6 +2,7 @@
 #define _MPL1151A_H
 
 #include <stdint.h>
+#include "../../libstm32l0/include/libstm32l0.h"
 
 #define MPL1151A_CONVERT (0x24)
 
@@ -28,7 +29,10 @@ struct mpl1151_coefficient_t {
 };
 
 
-extern const struct mpl1151_coefficient_t *mpl1151a_init(void);
+extern const struct mpl1151_coefficient_t *mpl1151a_init(
+    struct gpio_t *gpio,
+    uint8_t cs_number);
+
 extern float mpl1151a_get_pressure(void);
 
 #endif

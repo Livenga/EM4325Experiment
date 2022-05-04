@@ -6,6 +6,7 @@
 
 #include "../../libstm32l0/include/libstm32l0.h"
 #include "../include/asm.h"
+#include "../include/spi_ex.h"
 #include "../include/em4325.h"
 
 
@@ -30,16 +31,45 @@ extern void lpuart_println(
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 
 
+static struct gpio_t *_gpio = NULL;
+static uint8_t _cs_number = 0;
+
+
+/**
+ */
+void em4325_init(
+    struct gpio_t *gpio,
+    uint8_t cs) {
+  _gpio      = gpio;
+  _cs_number = cs;
+}
+
 /**
  */
 uint16_t em4325_request_status(void) {
   uint32_t recv;
-  GPIOB->BSRR |= (1 << 17);
+  CS_OFF(_gpio, _cs_number);
 
-  spi_communicate(SPI1, 0xe0);
-  recv = spi_communicate(SPI1, 0x00);
+  spi_communicate(SPI1, EM4325_REQUEST_STATUS_COMMAND);
+  do {
+    recv = spi_communicate(SPI1, 0x00);
+  } while(recv == 0);
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
+
+  return recv;
+}
+
+uint16_t em4325_boot(void) {
+  uint32_t recv;
+  CS_OFF(_gpio, _cs_number);
+
+  spi_communicate(SPI1, EM4325_BOOT_COMMAND);
+  do {
+    recv = spi_communicate(SPI1, 0x00);
+  }while(recv == 0);
+
+  CS_ON(_gpio, _cs_number);
 
   return recv;
 }
@@ -52,9 +82,13 @@ int8_t em4325_get_sensordata(
   if(p == NULL)
     return -1;
 
-  GPIOB->BSRR |= (1 << 17);
+  CS_OFF(_gpio, _cs_number);
 
-  spi_communicate(SPI1, (required_new_sample ? 0xe5 : 0xe4));
+  spi_communicate(
+      SPI1,
+      (required_new_sample
+       ? EM4325_GET_SENSOR_DATA_AFTER_NEW_SAMPLE 
+       : EM4325_GET_SENSOR_DATA));
 
   mdelay16(20);
 
@@ -74,10 +108,9 @@ int8_t em4325_get_sensordata(
     }
   }
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
 
   p->status = status;
-
   if(response != 0)
     return response;
 
@@ -90,7 +123,7 @@ int8_t em4325_get_sensordata(
 uint16_t em4325_read_word(
     spi_t *spi,
     uint8_t address) {
-  GPIOB->BSRR |= (1 << 17);
+  CS_OFF(_gpio, _cs_number);
 
   spi_communicate(spi, 0xe7);
   spi_communicate(spi, address);
@@ -111,7 +144,7 @@ uint16_t em4325_read_word(
 #endif
   }
 
-  GPIOB->BSRR |= (1 << 1);
+  CS_ON(_gpio, _cs_number);
 
   uint16_t data;
   memcpy((void *)&data, (const void *)buffer, sizeof(uint16_t));
@@ -129,7 +162,7 @@ uint8_t em4325_write_word(
     spi_t    *spi,
     uint8_t  address,
     uint16_t data) {
-  GPIOB->BSRR |= 1 << 17;
+  CS_OFF(_gpio, _cs_number);
 
   spi_communicate(spi, 0xe8);
   spi_communicate(spi, address);
@@ -143,7 +176,7 @@ uint8_t em4325_write_word(
     status = spi_communicate(spi, 0);
   } while(status == 0);
 
-  GPIOB->BSRR |= 1 << 1;
+  CS_ON(_gpio, _cs_number);
 
 #ifdef __DEBUG__
   lpuart_print((struct lpuart_t *)LPUART1, "# Write world response: ");

@@ -83,8 +83,13 @@ int main(void) {
   gpio_set_alternate_function((struct gpio_t *)GPIOA, 7, AF0); // MOSI
 
   // GPIO B 1 CS
-  gpio_set_mode((struct gpio_t *)GPIOB, 1, GPIO_MODER_MODE_GPO);
   GPIOB->BSRR |= (1 << 1);
+  gpio_set_mode((struct gpio_t *)GPIOB, 1, GPIO_MODER_MODE_GPO);
+
+  // GPIO A 1 CS
+  gpio_set_mode((struct gpio_t *)GPIOA, 1, GPIO_MODER_MODE_GPO);
+  GPIOA->BSRR |= (1 << 1);
+
 
   SPI1->CR1 =  SPI_CR1_CRCEN | SPI_CR1_BR_FPCLK_4 | SPI_CR1_MSTR;
   //SPI1->CR1 |= SPI_CR1_LSBFIRST;
@@ -113,18 +118,22 @@ int main(void) {
   lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
 #endif
 
-  mpl1151a_init();
+  // MPL1151A 初期設定
+  mpl1151a_init((struct gpio_t *)GPIOA, 1);
   mdelay16(3000);
 
+  // EM4325 初期設定
+  em4325_init((struct gpio_t *)GPIOB, 1);
+
+
+  // 割り込みの有効化と優先順位設定
   NVIC_enable_IRQ(LPUART1_IRQn);
   //NVIC_enable_IRQ(TIM2_IRQn);
-
   NVIC_set_priority(LPUART1_IRQn, 1);
   //NVIC_set_priority(TIM2_IRQn, 0);
   NVIC_set_priority(SysTick_IRQn, 3);
 
-
-  //
+  // SysTick 設定
   STK->RVR = 2052000;
   STK->CVR = 0;
   STK->CSR = STK_CSR_TICKINT

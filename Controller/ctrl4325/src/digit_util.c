@@ -3,7 +3,28 @@
 
 #include "../../libstm32l0/include/libstm32l0.h"
 
+#define HEX2CHR(u8) \
+  (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
+
+extern void lpuart_print(struct lpuart_t *lpuart, const char * str);
 extern void lpuart_putchar(struct lpuart_t *lpuart, const int8_t c);
+extern void lpuart_println(struct lpuart_t *lpuart, const char *str);
+
+
+/**
+ */
+void print_to_hex(
+    uint32_t value,
+    size_t size) {
+  uint8_t display_count = size * 2;
+
+  lpuart_print((struct lpuart_t *)LPUART1, "0x");
+  for(int i = 0; i < display_count; ++i) {
+    size_t offset = 4 * (display_count - (i + 1));
+    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((value >> offset) & 0x0f));
+  }
+  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+}
 
 
 /**
