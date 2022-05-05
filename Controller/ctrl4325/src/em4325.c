@@ -27,6 +27,9 @@ extern void lpuart_println(
     struct lpuart_t *lpuart,
     const char *str);
 
+extern void print_to_hex(uint32_t value, size_t size);
+
+
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 
@@ -158,6 +161,8 @@ uint16_t em4325_read_word(
   return data;
 }
 
+/**
+ */
 uint8_t em4325_write_word(
     spi_t    *spi,
     uint8_t  address,
@@ -180,9 +185,7 @@ uint8_t em4325_write_word(
 
 #ifdef __DEBUG__
   lpuart_print((struct lpuart_t *)LPUART1, "# Write world response: ");
-  lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 4) & 0x0f));
-  lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR((status >> 0) & 0x0f));
-  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+  print_to_hex(status, sizeof(int16_t));
 #endif
 
   return status;
