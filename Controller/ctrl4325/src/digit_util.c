@@ -2,13 +2,11 @@
 #include <stdint.h>
 
 #include "../../libstm32l0/include/libstm32l0.h"
+#include "../include/lpuart_ex.h"
 
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 
-extern void lpuart_print(struct lpuart_t *lpuart, const char * str);
-extern void lpuart_putchar(struct lpuart_t *lpuart, const int8_t c);
-extern void lpuart_println(struct lpuart_t *lpuart, const char *str);
 
 
 /**

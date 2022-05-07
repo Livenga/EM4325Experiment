@@ -6,6 +6,7 @@
 #include "nvic.h"
 #include "scb.h"
 #include "systick.h"
+#include "syscfg.h"
 
 #include "exti.h"
 #include "pwr.h"

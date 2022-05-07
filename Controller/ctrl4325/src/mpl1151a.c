@@ -5,6 +5,10 @@
 #include "../../libstm32l0/include/libstm32l0.h"
 #include "../include/spi_ex.h"
 #include "../include/mpl1151a.h"
+#include "../include/digit_util.h"
+#include "../include/lpuart_ex.h"
+
+#define __DEBUG__
 
 
 extern void mdelay16(uint16_t msec);
@@ -71,6 +75,22 @@ const struct mpl1151_coefficient_t *mpl1151a_init(
           b1  = (b1_msb << 8) | b1_lsb,
           b2  = (b2_msb << 8) | b2_lsb,
           c12 = (c12_msb << 8) | c12_lsb;
+
+#ifdef __DEBUG__
+  lpuart_println((struct lpuart_t *)LPUART1, "# MPL1151A Coefficient...");
+  lpuart_print((struct lpuart_t *)LPUART1, "\ta0  = ");
+  print_to_hex(a0, sizeof(uint16_t));
+
+  lpuart_print((struct lpuart_t *)LPUART1, "\tb1  = ");
+  print_to_hex(b1, sizeof(uint16_t));
+
+  lpuart_print((struct lpuart_t *)LPUART1, "\tb2  = ");
+  print_to_hex(b2, sizeof(uint16_t));
+
+  lpuart_print((struct lpuart_t *)LPUART1, "\tc12 = ");
+  print_to_hex(c12, sizeof(uint16_t));
+  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+#endif
 
   _coefficient.a0  = (float)a0 / 8.f;
   _coefficient.b1  = (float)b1 / 8192.f;

@@ -63,6 +63,9 @@ int main(void) {
   // GPIO A, B, H 有効化
   RCC->IOPENR |= RCC_IOPENR_IOPAEN | RCC_IOPENR_IOPBEN | RCC_IOPENR_IOPHEN;
 
+  gpio_set_mode((struct gpio_t *)GPIOA, 0, GPIO_MODER_MODE_GPO);
+  gpio_set_mode((struct gpio_t *)GPIOA, 4, GPIO_MODER_MODE_INPUT);
+
 
   // LPUART 設定
   // GPIO A 2,3, LPUART1 Tx, LPUART1 Rx
@@ -89,7 +92,6 @@ int main(void) {
   // GPIO A 1 CS
   gpio_set_mode((struct gpio_t *)GPIOA, 1, GPIO_MODER_MODE_GPO);
   GPIOA->BSRR |= (1 << 1);
-
 
   SPI1->CR1 =  SPI_CR1_CRCEN | SPI_CR1_BR_FPCLK_4 | SPI_CR1_MSTR;
   //SPI1->CR1 |= SPI_CR1_LSBFIRST;
@@ -119,11 +121,17 @@ int main(void) {
 #endif
 
   // MPL1151A 初期設定
-  mpl1151a_init((struct gpio_t *)GPIOA, 1);
+  GPIOA->BSRR = (1 << 0);
+  mdelay16(1000);
+
+
+  //mpl1151a_init((struct gpio_t *)GPIOA, 1);
+  mpl1151a_init((struct gpio_t *)GPIOB, 1);
   mdelay16(3000);
 
   // EM4325 初期設定
-  em4325_init((struct gpio_t *)GPIOB, 1);
+  //em4325_init((struct gpio_t *)GPIOB, 1);
+  em4325_init((struct gpio_t *)GPIOA, 1);
 
 
   // 割り込みの有効化と優先順位設定

@@ -43,7 +43,7 @@ void SysTick_handler(void) {
   _is_bright ^= 1;
 #endif
 
-#if 1
+#if 0
   uint16_t em4325_status = em4325_request_status();
 
 #ifdef __DEBUG__
