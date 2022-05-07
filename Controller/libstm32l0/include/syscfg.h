@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include "io.h"
 
-#define SYSCFG_ADDRESS (0x00000000)
+#define SYSCFG_ADDRESS (0x40010000)
 #define SYSCFG ((syscfg_t *)SYSCFG_ADDRESS)
 
 typedef volatile struct syscfg_t syscfg_t;
@@ -79,14 +79,24 @@ struct syscfg_t {
  * Address offset: 0x0c
  * Reset value: 0x0000 0000
  */
-#define SYSCFG_EXTICR3_EXTI7 (0x0000f000)
-#define SYSCFG_EXTICR3_EXTI6 (0x00000f00)
-#define SYSCFG_EXTICR3_EXTI5 (0x000000f0)
-#define SYSCFG_EXTICR3_EXTI4 (0x0000000f)
+#define SYSCFG_EXTICR2_EXTI7 (0x0000f000)
+#define SYSCFG_EXTICR2_EXTI6 (0x00000f00)
+#define SYSCFG_EXTICR2_EXTI5 (0x000000f0)
+#define SYSCFG_EXTICR2_EXTI4 (0x0000000f)
 
 
 /** SYSCFG external interrupt configuration register 3
  * Address offset: 0x10
+ * Reset value: 0x0000 0000
+ */
+#define SYSCFG_EXTICR3_EXTI11 (0x0000f000)
+#define SYSCFG_EXTICR3_EXTI10 (0x00000f00)
+#define SYSCFG_EXTICR3_EXTI9  (0x000000f0)
+#define SYSCFG_EXTICR3_EXTI8  (0x0000000f)
+
+
+/** SYSCFG external interrupt configuration register 4
+ * Address offset: 0x14
  * Reset value: 0x0000 0000
  */
 #define SYSCFG_EXTICR4_EXTI15 (0x0000f000)

@@ -19,6 +19,7 @@ CSRC = src/main.c \
 			 src/udelay.c \
 			 src/em4325.c \
 			 src/mpl1151a.c \
+			 src/exti15_4.c \
 			 src/digit_util.c
 
 SSRC = src/asm/startup.s

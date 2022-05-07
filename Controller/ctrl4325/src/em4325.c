@@ -8,26 +8,14 @@
 #include "../include/asm.h"
 #include "../include/spi_ex.h"
 #include "../include/em4325.h"
+#include "../include/lpuart_ex.h"
+#include "../include/digit_util.h"
 
 
 extern uint16_t spi_communicate(spi_t *spi, uint16_t data);
 
 extern void mdelay16(uint16_t msec);
 extern void udelay16(uint16_t msec);
-
-extern void lpuart_putchar(
-    struct lpuart_t *lpuart,
-    const int8_t c);
-
-extern void lpuart_print(
-    struct lpuart_t *lpuart,
-    const char *str);
-
-extern void lpuart_println(
-    struct lpuart_t *lpuart,
-    const char *str);
-
-extern void print_to_hex(uint32_t value, size_t size);
 
 
 #define HEX2CHR(u8) \

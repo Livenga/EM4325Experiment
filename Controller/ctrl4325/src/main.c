@@ -52,7 +52,7 @@ int main(void) {
   }
 
   // SPI1, TIM21, System Config 有効化
-  RCC->APB2ENR |= RCC_APB2ENR_SPI1EN | RCC_APB2ENR_TIM21EN | RCC_APB2ENR_SYSCFEN;
+  RCC->APB2ENR |= RCC_APB2ENR_SPI1EN | RCC_APB2ENR_TIM21EN | RCC_APB2ENR_SYSCFGEN;
   // LPUART1, TIM2 有効化
   RCC->APB1ENR |= RCC_APB1ENR_LPUART1EN
     | RCC_APB1ENR_TIM2EN;
@@ -74,6 +74,7 @@ int main(void) {
 
   gpio_set_alternate_function((struct gpio_t *)GPIOA, 2, AF6);
   gpio_set_alternate_function((struct gpio_t *)GPIOA, 3, AF6);
+
 
   // SPI 設定
   // GPIO A 5, 6, 7 SCK, MISO, MOSI
@@ -116,30 +117,12 @@ int main(void) {
   //LPUART1->BRR = 111840; // 9600
   LPUART1->CR1 |= LPUART_CR1_UE;
 
-#ifdef __DEBUG__
-  lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
-#endif
 
-  // MPL1151A 初期設定
-  GPIOA->BSRR = (1 << 0);
-  mdelay16(1000);
+  //
+  SYSCFG->EXTICR2 = (SYSCFG->EXTICR2 & ~SYSCFG_EXTICR2_EXTI4);
+  EXTI->IMR  |= EXTI_IMR_IM4;
+  EXTI->RTSR |= EXTI_RTSR_RT4;
 
-
-  //mpl1151a_init((struct gpio_t *)GPIOA, 1);
-  mpl1151a_init((struct gpio_t *)GPIOB, 1);
-  mdelay16(3000);
-
-  // EM4325 初期設定
-  //em4325_init((struct gpio_t *)GPIOB, 1);
-  em4325_init((struct gpio_t *)GPIOA, 1);
-
-
-  // 割り込みの有効化と優先順位設定
-  NVIC_enable_IRQ(LPUART1_IRQn);
-  //NVIC_enable_IRQ(TIM2_IRQn);
-  NVIC_set_priority(LPUART1_IRQn, 1);
-  //NVIC_set_priority(TIM2_IRQn, 0);
-  NVIC_set_priority(SysTick_IRQn, 3);
 
   // SysTick 設定
   STK->RVR = 2052000;
@@ -147,6 +130,32 @@ int main(void) {
   STK->CSR = STK_CSR_TICKINT
     | STK_CSR_CLKSOURCE
     | STK_CSR_ENABLE;
+
+
+  // 割り込みの有効化と優先順位設定
+  NVIC_enable_IRQ(LPUART1_IRQn);
+  NVIC_enable_IRQ(EXTI15_4_IRQn);
+
+  //NVIC_enable_IRQ(TIM2_IRQn);
+  //NVIC_set_priority(TIM2_IRQn, 0);
+
+  NVIC_set_priority(LPUART1_IRQn, 1);
+  NVIC_set_priority(EXTI15_4_IRQn, 2);
+  NVIC_set_priority(SysTick_IRQn, 3);
+
+
+#ifdef __DEBUG__
+  lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
+#endif
+  // EM4325 初期設定
+  em4325_init((struct gpio_t *)GPIOA, 1);
+
+  // MPL1151A 初期設定
+  GPIOA->BSRR = (1 << 0);
+  mdelay16(1000);
+
+  mpl1151a_init((struct gpio_t *)GPIOB, 1);
+  mdelay16(3000);
 
   while(1) {
     NOP();
