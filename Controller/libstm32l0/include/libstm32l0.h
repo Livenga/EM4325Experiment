@@ -18,5 +18,6 @@
 #include "tim2.h"
 #include "spi.h"
 #include "adc.h"
+#include "lptim.h"
 
 #endif

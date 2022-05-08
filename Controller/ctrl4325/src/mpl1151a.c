@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../../libstm32l0/include/libstm32l0.h"
 #include "../include/spi_ex.h"
-#include "../include/mpl1151a.h"
+#include "../include/mpl115a1.h"
 #include "../include/digit_util.h"
 #include "../include/lpuart_ex.h"
 
@@ -17,7 +17,7 @@ extern uint16_t spi_communicate(spi_t *spi, uint16_t data);
 extern uint16_t spi_writeonly(spi_t *spi, uint16_t data);
 
 static int8_t _is_initialized = 0;
-static struct mpl1151_coefficient_t _coefficient;
+static struct mpl115a1_coefficient_t _coefficient;
 
 static struct gpio_t *_gpio = NULL;
 static uint8_t _cs_number = 0;
@@ -25,7 +25,7 @@ static uint8_t _cs_number = 0;
 
 /**
 */
-const struct mpl1151_coefficient_t *mpl1151a_init(
+const struct mpl115a1_coefficient_t *mpl115a1_init(
     struct gpio_t *gpio,
     uint8_t cs_number) {
   _gpio = gpio,
@@ -35,35 +35,35 @@ const struct mpl1151_coefficient_t *mpl1151a_init(
     return &_coefficient;
   }
 
-  memset((void *)&_coefficient, 0, sizeof(struct mpl1151_coefficient_t));
+  memset((void *)&_coefficient, 0, sizeof(struct mpl115a1_coefficient_t));
 
   CS_OFF(_gpio, _cs_number);
 
   // 計数の読み出し
   uint16_t a0_msb, a0_lsb;
-  spi_communicate(SPI1, MPL1151A_A0_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_A0_MSB_COMMAND);
   a0_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_A0_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_A0_LSB_COMMAND);
   a0_lsb = spi_communicate(SPI1, 0);
 
 
   uint16_t b1_msb, b1_lsb;
-  spi_communicate(SPI1, MPL1151A_B1_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_B1_MSB_COMMAND);
   b1_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_B1_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_B1_LSB_COMMAND);
   b1_lsb = spi_communicate(SPI1, 0);
 
 
   uint16_t b2_msb, b2_lsb;
-  spi_communicate(SPI1, MPL1151A_B2_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_B2_MSB_COMMAND);
   b2_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_B2_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_B2_LSB_COMMAND);
   b2_lsb = spi_communicate(SPI1, 0);
 
   uint16_t c12_msb, c12_lsb;
-  spi_communicate(SPI1, MPL1151A_C12_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_C12_MSB_COMMAND);
   c12_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_C12_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_C12_LSB_COMMAND);
   c12_lsb = spi_communicate(SPI1, 0);
 
   spi_communicate(SPI1, 0);
@@ -77,7 +77,7 @@ const struct mpl1151_coefficient_t *mpl1151a_init(
           c12 = (c12_msb << 8) | c12_lsb;
 
 #ifdef __DEBUG__
-  lpuart_println((struct lpuart_t *)LPUART1, "# MPL1151A Coefficient...");
+  lpuart_println((struct lpuart_t *)LPUART1, "# MPL115A1 Coefficient...");
   lpuart_print((struct lpuart_t *)LPUART1, "\ta0  = ");
   print_to_hex(a0, sizeof(uint16_t));
 
@@ -105,14 +105,14 @@ const struct mpl1151_coefficient_t *mpl1151a_init(
 }
 
 
-float mpl1151a_get_pressure(void) {
+float mpl115a1_get_pressure(void) {
   if(! _is_initialized) {
     return .0f;
   }
 
   CS_OFF(_gpio, _cs_number);
 
-  spi_communicate(SPI1, MPL1151A_CONVERT);
+  spi_communicate(SPI1, MPL115A1_CONVERT);
   spi_communicate(SPI1, 0);
 
   CS_ON(_gpio, _cs_number);
@@ -122,15 +122,15 @@ float mpl1151a_get_pressure(void) {
   CS_OFF(_gpio, _cs_number);
 
   uint16_t padc_msb, padc_lsb;
-  spi_communicate(SPI1, MPL1151A_PADC_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_PADC_MSB_COMMAND);
   padc_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_PADC_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_PADC_LSB_COMMAND);
   padc_lsb = spi_communicate(SPI1, 0);
 
   uint16_t tadc_msb, tadc_lsb;
-  spi_communicate(SPI1, MPL1151A_TADC_MSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_TADC_MSB_COMMAND);
   tadc_msb = spi_communicate(SPI1, 0);
-  spi_communicate(SPI1, MPL1151A_TADC_LSB_COMMAND);
+  spi_communicate(SPI1, MPL115A1_TADC_LSB_COMMAND);
   tadc_lsb = spi_communicate(SPI1, 0);
 
   spi_communicate(SPI1, 0x00);

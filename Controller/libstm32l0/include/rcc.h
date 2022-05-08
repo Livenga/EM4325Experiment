@@ -289,6 +289,31 @@ struct rcc_t {
 #define RCC_CCIPR_LPUART1SEL (0x00000c00)
 #define RCC_CCIPR_USART2SEL  (0x0000000c)
 
+// Low-power Timer clock source selection bits
+#define RCC_CCIPR_LPTIM1SEL_APB   (0x00000000)
+#define RCC_CCIPR_LPTIM1SEL_LSI   (0x00040000)
+#define RCC_CCIPR_LPTIM1SEL_HSI16 (0x00080000)
+#define RCC_CCIPR_LPTIM1SEL_LSE   (0x000c0000)
+
+// I2C1 clock source selection bits
+#define RCC_CCIPR_I2C1SEL_APB     (0x00000000)
+#define RCC_CCIPR_I2C1SEL_SYSTEM  (0x00001000)
+#define RCC_CCIPR_I2C1SEL_HSI16   (0x00002000)
+#define RCC_CCIPR_I2C1SEL_NOT_USE (0x00003000)
+
+// LPUART1 clock source selection bits
+#define RCC_CCIPR_LPUART1SEL_APB    (0x00000000)
+#define RCC_CCIPR_LPUART1SEL_SYSTEM (0x00000400)
+#define RCC_CCIPR_LPUART1SEL_HSI16  (0x00000800)
+#define RCC_CCIPR_LPUART1SEL_LSE    (0x00000c00)
+
+// USART2 clock source selection bits
+#define RCC_CCIPR_USART2SEL_APB    (0x00000000)
+#define RCC_CCIPR_USART2SEL_SYSTEM (0x00000004)
+#define RCC_CCIPR_USART2SEL_HSI16  (0x00000008)
+#define RCC_CCIPR_USART2SEL_LSE    (0x0000000c)
+
+
 /** Control/status register (CSR)
  * Offset: 0x0050
  * Reset value: 0x0c00 0004

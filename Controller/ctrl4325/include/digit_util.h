@@ -1,6 +1,7 @@
 #ifndef _DIGIT_UTIL_H
 #define _DIGIT_UTIL_H
 
+#include <stdio.h>
 #include <stdint.h>
 
 extern void print_to_hex(uint32_t value, size_t size);

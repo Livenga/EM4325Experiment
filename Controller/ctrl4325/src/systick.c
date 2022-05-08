@@ -3,25 +3,14 @@
 #include <stdint.h>
 
 #include "../../libstm32l0/include/libstm32l0.h"
-#include "../include/mpl1151a.h"
+#include "../include/lpuart_ex.h"
+#include "../include/digit_util.h"
 #include "../include/em4325.h"
+//#include "../include/mpl115a1.h"
 
 #define __DEBUG__
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
-
-extern void lpuart_putchar(
-    struct lpuart_t *lpuart,
-    const int8_t c);
-extern void lpuart_print(
-    struct lpuart_t *lpuart,
-    const char *str);
-extern void lpuart_println(
-    struct lpuart_t *lpuart,
-    const char *str);
-
-extern void print_float_value(float value, size_t n);
-extern void print_to_hex(uint32_t value, size_t size);
 
 static uint8_t _is_bright = 0;
 static uint8_t _is_em4325_ready = 0;
@@ -34,13 +23,15 @@ void SysTick_handler(void) {
   } else {
     GPIOA->BSRR = (1 <<  10);
   }
+  _is_bright ^= 1;
+#endif
 
+
+#if 0
   float pressure = mpl1151a_get_pressure();
   lpuart_print((struct lpuart_t *)LPUART1, "Pressure = ");
   print_float_value(pressure, 3);
   lpuart_println((struct lpuart_t *)LPUART1, "[kPa]");
-
-  _is_bright ^= 1;
 #endif
 
 #if 0

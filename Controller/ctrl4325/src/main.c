@@ -3,30 +3,14 @@
 
 #include "../include/asm.h"
 #include "../../libstm32l0/include/libstm32l0.h"
+#include "../include/nvic_ex.h"
+#include "../include/lpuart_ex.h"
 #include "../include/em4325.h"
-#include "../include/mpl1151a.h"
+#include "../include/mpl115a1.h"
 
 #define __DEBUG__ 1
 
 extern void mdelay16(uint16_t msec);
-//extern void udelay16(uint16_t usec);
-
-extern void NVIC_enable_IRQ(irq_type_t n);
-extern void NVIC_set_priority(
-    irq_type_t    n,
-    uint32_t      priority);
-
-extern void lpuart_putchar(
-    struct lpuart_t *lpuart,
-    const int8_t c);
-
-extern void lpuart_print(
-    struct lpuart_t *lpuart,
-    const char *str);
-
-extern void lpuart_println(
-    struct lpuart_t *lpuart,
-    const char *str);
 
 extern void gpio_set_mode(
     struct  gpio_t *gpio,
@@ -51,14 +35,26 @@ int main(void) {
     while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI);
   }
 
+  // LSI 有効化 (37 [kHz])
+  if((RCC->CSR & RCC_CSR_LSIRDY) == 0) {
+    RCC->CSR |= RCC_CSR_LSION;
+    while((RCC->CSR & RCC_CSR_LSIRDY) == 0) { NOP(); }
+  }
+
+
   // SPI1, TIM21, System Config 有効化
   RCC->APB2ENR |= RCC_APB2ENR_SPI1EN | RCC_APB2ENR_TIM21EN | RCC_APB2ENR_SYSCFGEN;
-  // LPUART1, TIM2 有効化
-  RCC->APB1ENR |= RCC_APB1ENR_LPUART1EN
+  // LPTIM1, LPUART1, TIM2 有効化
+  RCC->APB1ENR |= RCC_APB1ENR_LPTIM1EN
+    | RCC_APB1ENR_LPUART1EN
     | RCC_APB1ENR_TIM2EN;
 
   // LPUART1 のクロック供給元をSystem Clock(MSI: 4.2MHz) に変更.
-  RCC->CCIPR = (RCC->CCIPR & ~RCC_CCIPR_LPUART1SEL) | (0b01 << 10);
+  // LPTIM1 クロック供給源を LSI に変更.
+  RCC->CCIPR = (RCC->CCIPR & ~(RCC_CCIPR_LPUART1SEL | RCC_CCIPR_LPTIM1SEL))
+    | RCC_CCIPR_LPUART1SEL_SYSTEM
+    | RCC_CCIPR_LPTIM1SEL_LSI;
+
 
   // GPIO A, B, H 有効化
   RCC->IOPENR |= RCC_IOPENR_IOPAEN | RCC_IOPENR_IOPBEN | RCC_IOPENR_IOPHEN;
@@ -118,7 +114,7 @@ int main(void) {
   LPUART1->CR1 |= LPUART_CR1_UE;
 
 
-  //
+  // EXTI4
   SYSCFG->EXTICR2 = (SYSCFG->EXTICR2 & ~SYSCFG_EXTICR2_EXTI4);
   EXTI->IMR  |= EXTI_IMR_IM4;
   EXTI->RTSR |= EXTI_RTSR_RT4;
@@ -132,17 +128,37 @@ int main(void) {
     | STK_CSR_ENABLE;
 
 
+  /* 経過時間 (単位: 秒[s]) を余裕を持った形で計測するため,
+   * LPTIM1 を 1[s]毎に割り込みを発生させ _ticks をカウントアップさせる.
+   *
+   * UHF RFID リーダから設定に応じた間隔で照射される電波にタグがリーダの応答するので
+   * 必要以上に書き込みを実行させないため, 経過時間が必要.
+   *
+   * 精度が要求されないため LPTIM1 のクロック源に LSI を採用.
+   */
+  // LPTIM1 設定とカウント開始
+  LPTIM1->IER = LPTIM_IER_ARRMIE;
+  // LSI の周波数は 37[kHz]. (fLSI / 8 = 4625) の周期で CNT レジスタを加算.
+  LPTIM1->CFGR = LPTIM_CFGR_PRESC_PER_8
+    | LPTIM_CFGR_PRELOAD;
+  LPTIM1->CR   = LPTIM_CR_ENABLE;
+
+  // 自動更新の値を LSI の周波数をプリスケーラで処理した値と同じに設定.
+  LPTIM1->ARR  = 4625;
+  LPTIM1->CR   |= LPTIM_CR_CNTSTRT | LPTIM_CR_ENABLE;
+
+
   // 割り込みの有効化と優先順位設定
   NVIC_enable_IRQ(LPUART1_IRQn);
   NVIC_enable_IRQ(EXTI15_4_IRQn);
-
-  //NVIC_enable_IRQ(TIM2_IRQn);
-  //NVIC_set_priority(TIM2_IRQn, 0);
-
   NVIC_set_priority(LPUART1_IRQn, 1);
   NVIC_set_priority(EXTI15_4_IRQn, 2);
   NVIC_set_priority(SysTick_IRQn, 3);
 
+  // LPTIM1 の割り込み処理に多大な負荷はかからないので, 最も優先させる.
+  // 異常が生じた場合は要修正.
+  NVIC_enable_IRQ(LPTIM1_IRQn);
+  NVIC_set_priority(LPTIM1_IRQn, 0);
 
 #ifdef __DEBUG__
   lpuart_println((struct lpuart_t *)LPUART1, "Hello, World");
@@ -154,7 +170,7 @@ int main(void) {
   GPIOA->BSRR = (1 << 0);
   mdelay16(1000);
 
-  mpl1151a_init((struct gpio_t *)GPIOB, 1);
+  mpl115a1_init((struct gpio_t *)GPIOB, 1);
   mdelay16(3000);
 
   while(1) {
