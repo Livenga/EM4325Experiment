@@ -2,8 +2,6 @@
 #include <string.h>
 #include "../../libstm32l0/include/libstm32l0.h"
 
-#define __DEBUG__
-
 #define RECV_BUFFER_SIZE 31
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))

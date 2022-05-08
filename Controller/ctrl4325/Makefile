@@ -27,13 +27,15 @@ SSRC = src/asm/startup.s
 CPU = cortex-m0plus
 ARCH = armv6-m
 
+DEFINES = -D__DEBUG__
 CFLAGS = -mcpu=$(CPU) \
 				 -mtune=$(CPU) \
 				 -march=$(ARCH) \
 				 -msoft-float \
 				 -mfloat-abi=soft \
 				 -mthumb \
-				 -g
+				 -g \
+				 $(DEFINES)
 
 ASFLAGS = -mcpu=$(CPU) \
 					-mthumb

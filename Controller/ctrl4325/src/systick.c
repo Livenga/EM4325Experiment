@@ -6,9 +6,7 @@
 #include "../include/lpuart_ex.h"
 #include "../include/digit_util.h"
 #include "../include/em4325.h"
-//#include "../include/mpl115a1.h"
 
-#define __DEBUG__
 #define HEX2CHR(u8) \
   (((u8) >= 0x0a) ? (((u8) - 0x0a) + 'A') : ((u8) + '0'))
 

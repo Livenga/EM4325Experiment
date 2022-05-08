@@ -143,7 +143,6 @@ uint16_t em4325_read_word(
   for(int8_t i = 0; i < 4; ++i) {
     int8_t shift_size = 12 - (i * 4);
     uint8_t segment = (data >> shift_size) & 0x0f;
-    lpuart_putchar((struct lpuart_t *)LPUART1, HEX2CHR(segment));
   }
 
   return data;
@@ -170,11 +169,6 @@ uint8_t em4325_write_word(
   } while(status == 0);
 
   CS_ON(_gpio, _cs_number);
-
-#ifdef __DEBUG__
-  lpuart_print((struct lpuart_t *)LPUART1, "# Write world response: ");
-  print_to_hex(status, sizeof(int16_t));
-#endif
 
   return status;
 }

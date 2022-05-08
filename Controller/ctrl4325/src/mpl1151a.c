@@ -8,8 +8,6 @@
 #include "../include/digit_util.h"
 #include "../include/lpuart_ex.h"
 
-#define __DEBUG__
-
 
 extern void mdelay16(uint16_t msec);
 
