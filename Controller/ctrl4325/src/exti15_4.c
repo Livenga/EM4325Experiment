@@ -5,6 +5,7 @@
 #include "../include/nvic_ex.h"
 #include "../include/lpuart_ex.h"
 #include "../include/em4325.h"
+#include "../include/em4325_ex.h"
 #include "../include/mpl115a1.h"
 #include "../include/digit_util.h"
 
@@ -35,13 +36,21 @@ void EXTI15_4_handler(void) {
   NVIC_disable_IRQ(EXTI15_4_IRQn);
 
   if((pr & EXTI_PR_PIF4) == EXTI_PR_PIF4) {
+    struct em4325_ex_config_t* e4325ex_config = NULL;
     EXTI->PR = EXTI_PR_PIF4;
     uint32_t current_ticks = get_ticks();
 
 #ifdef __DEBUG__
       lpuart_println((struct lpuart_t *)LPUART1, "// PA4 立ち上がり検出...");
 #endif
-    if(_previous_ticks == 0 || (current_ticks - _previous_ticks) > 4) {
+
+      uint16_t interval_time = 5;
+      e4325ex_config = em4325_ex_get_config(0);
+      if(e4325ex_config != NULL) {
+        interval_time = e4325ex_config->interval_time;
+      }
+
+    if(_previous_ticks == 0 || (current_ticks - _previous_ticks) >= interval_time) {
       _previous_ticks = current_ticks;
 
       // 気圧データの取得と EPC 領域への書き込み

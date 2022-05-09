@@ -24,6 +24,33 @@ void print_to_hex(
   lpuart_println((struct lpuart_t *)LPUART1, NULL);
 }
 
+/**
+ */
+void print_to_dec(int32_t value) {
+  uint16_t digit_count = 0;
+
+  if(value < 0) {
+    value = -value;
+    lpuart_putchar((struct lpuart_t *)LPUART1, '-');
+  }
+
+  int32_t u32 = value;
+  while(u32 > 0) {
+    ++digit_count;
+    u32 /= 10;
+  }
+
+  for(int i = 0; i < digit_count; ++i) {
+    uint16_t div = 1;
+    for(int j = 0; j < digit_count - (i + 1); ++j) {
+      div *= 10;
+    }
+
+    uint8_t d = (value / div) % 10;
+    lpuart_putchar((struct lpuart_t *)LPUART1, '0' + d);
+  }
+}
+
 
 /**
  */

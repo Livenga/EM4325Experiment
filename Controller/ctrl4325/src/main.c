@@ -6,8 +6,10 @@
 #include "../include/nvic_ex.h"
 #include "../include/lpuart_ex.h"
 #include "../include/em4325.h"
+#include "../include/em4325_ex.h"
 #include "../include/mpl115a1.h"
 
+extern void print_to_dec(int32_t value);
 #define __DEBUG__ 1
 
 extern void mdelay16(uint16_t msec);
@@ -164,6 +166,7 @@ int main(void) {
 #endif
   // EM4325 初期設定
   em4325_init((struct gpio_t *)GPIOA, 1);
+  em4325_ex_get_config(1);
 
   // MPL1151A 初期設定
   GPIOA->BSRR = (1 << 0);

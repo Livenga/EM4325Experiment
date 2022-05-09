@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 extern void print_to_hex(uint32_t value, size_t size);
+extern void print_to_dec(int32_t value);
 extern void print_float_value(float value, size_t n);
 
 #endif

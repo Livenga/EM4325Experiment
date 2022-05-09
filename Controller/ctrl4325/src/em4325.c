@@ -10,6 +10,7 @@
 #include "../include/em4325.h"
 #include "../include/lpuart_ex.h"
 #include "../include/digit_util.h"
+#include "../include/em4325_ex.h"
 
 
 extern uint16_t spi_communicate(spi_t *spi, uint16_t data);
@@ -24,6 +25,7 @@ extern void udelay16(uint16_t msec);
 
 static struct gpio_t *_gpio = NULL;
 static uint8_t _cs_number = 0;
+static struct em4325_ex_config_t _ex_config;
 
 
 /**
@@ -33,6 +35,8 @@ void em4325_init(
     uint8_t cs) {
   _gpio      = gpio;
   _cs_number = cs;
+
+  memset((void *)&_ex_config, 0, sizeof(struct em4325_ex_config_t));
 }
 
 /**
@@ -171,4 +175,33 @@ uint8_t em4325_write_word(
   CS_ON(_gpio, _cs_number);
 
   return status;
+}
+
+
+/**
+ */
+struct em4325_ex_config_t *em4325_ex_get_config(uint8_t required_init) {
+  if(required_init) {
+    memset((void *)&_ex_config, 0, sizeof(struct em4325_ex_config_t));
+    uint16_t _msb = em4325_read_word(SPI1, EM4325_EX_CONFIG_ADDRESS + 0),
+             _lsb = em4325_read_word(SPI1, EM4325_EX_CONFIG_ADDRESS + 1);
+
+    uint32_t _config = ((uint32_t)_msb << 16) | _lsb;
+    _ex_config.interval_time = (_config & 0xff);
+
+    // 既定値が存在する場合, 初期値へ変更
+    if(_ex_config.interval_time == 0) { // 読み込み, 更新間隔 の既定値は 0
+      _ex_config.interval_time = 5;
+    }
+
+  }
+
+#ifdef __DEBUG__
+  lpuart_println((struct lpuart_t *)LPUART1, "# EM4325 Extended Config");
+  lpuart_print((struct lpuart_t *)LPUART1, "\tInterval Time = ");
+  print_to_dec(_ex_config.interval_time);
+  lpuart_println((struct lpuart_t *)LPUART1, NULL);
+#endif
+
+  return &_ex_config;
 }
