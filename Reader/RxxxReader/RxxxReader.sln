@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rr.Inventory", "rr.Inventory\rr.Inventory.csproj", "{0BB41965-2179-4861-A73B-6B5A6F805057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rr.Uhf", "rr.Uhf\rr.Uhf.csproj", "{8795B38A-84AE-4664-BDB2-9BCC8DA3DB15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BB41965-2179-4861-A73B-6B5A6F805057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB41965-2179-4861-A73B-6B5A6F805057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB41965-2179-4861-A73B-6B5A6F805057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB41965-2179-4861-A73B-6B5A6F805057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8795B38A-84AE-4664-BDB2-9BCC8DA3DB15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8795B38A-84AE-4664-BDB2-9BCC8DA3DB15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8795B38A-84AE-4664-BDB2-9BCC8DA3DB15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8795B38A-84AE-4664-BDB2-9BCC8DA3DB15}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
