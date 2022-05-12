@@ -193,7 +193,6 @@ struct em4325_ex_config_t *em4325_ex_get_config(uint8_t required_init) {
     if(_ex_config.interval_time == 0) { // 読み込み, 更新間隔 の既定値は 0
       _ex_config.interval_time = 5;
     }
-
   }
 
 #ifdef __DEBUG__
